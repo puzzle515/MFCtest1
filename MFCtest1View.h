@@ -4,6 +4,36 @@
 
 #pragma once
 #define IDC_LIST_CHARS 100
+#include "afxwin.h"
+
+struct SCharInfo
+{
+	CString m_char;
+	int m_type;
+	int m_sheet;
+	int m_sx;
+	int m_sy;
+	int m_line;
+	int m_order;
+	int m_width;
+	int m_height;
+};
+
+class CTypeDB
+{
+public:
+	int m_nSheet;
+	int m_nChar;
+	CArray <SCharInfo*, SCharInfo*> m_Chars;
+
+
+	BOOL CTypeDB::ReadCSVFile()
+	{
+		if (353 == m_Chars.GetSize()) return TRUE;
+		else return FALSE;
+	}
+};
+
 
 class CMFCtest1View : public CFormView
 {
@@ -19,6 +49,8 @@ public:
 // 특성입니다.
 public:
 	CMFCtest1Doc* GetDocument() const;
+	CTypeDB TypeDB;
+	int num = 1;
 
 // 작업입니다.
 public:
@@ -57,6 +89,7 @@ public:
 	afx_msg void OnBnClickedButton2();
 	CStatic m_book;
 	afx_msg void OnStnClickedMetafile();
+	CStatic m_k_num;
 };
 
 #ifndef _DEBUG  // MFCtest1View.cpp의 디버그 버전

@@ -53,6 +53,7 @@ void CMFCtest1View::DoDataExchange(CDataExchange* pDX)
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_CHARS, m_listctrl);
 	DDX_Control(pDX, IDC_MetaFile, m_book);
+	DDX_Control(pDX, IDC_K_NUM, m_k_num);
 }
 
 BOOL CMFCtest1View::PreCreateWindow(CREATESTRUCT& cs)
@@ -168,9 +169,177 @@ int CMFCtest1View::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+CStringArray CCount, TCount;
 
 void CMFCtest1View::OnBnClickedButton2()
 {
+
+	int size = 352;
+	CString Sm_Data;
+	// 중복 체크용
+	CString C_temp, T_temp;
+	int hwal = 352;
+	int p = 0;
+	int t = 0;
+
+
+
+
+	for (int i = 0; i < TypeDB.m_Chars.GetSize(); i++)
+	{
+		SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
+
+
+		if (NULL == pSCharInfo)
+			continue;
+		delete pSCharInfo;
+
+		pSCharInfo = NULL;
+	}
+
+	int data = 0;
+
+	CString strFilePath = _T("");
+	strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv");
+
+	FILE* fp = NULL;
+	fopen_s(&fp, strFilePath, "r");
+
+	if (fp)
+	{
+		char szContent[2048] = { 0, }; // 배열의 맨 앞을 NULL 로
+		memset(szContent, NULL, 2048);
+
+		while (fgets(szContent, 2048, fp))
+		{
+			CString strContent;
+			strContent.Format(_T("%s"), szContent);
+			memset(szContent, NULL, 2048);
+			if (strContent.Find(_T("#")) >= 0) continue;
+			strContent.Remove(_T('\r'));
+			strContent.Remove(_T('\n'));
+
+			SCharInfo* pSCharInfo = new SCharInfo;
+
+			CString rString;
+			int nSubString = 0;
+
+
+			while (AfxExtractSubString(rString, strContent, nSubString++, ','))
+			{
+				switch (nSubString)
+				{
+				case 1: pSCharInfo->m_char = _T(rString);
+					CCount.Add(rString);
+					break;
+				case 2: data = _ttoi(rString);
+					pSCharInfo->m_type = data;
+					TCount.Add(rString);
+					break;
+				case 3: data = _ttoi(rString);
+					pSCharInfo->m_sheet = data;
+					break;
+				case 4: data = _ttoi(rString);
+					pSCharInfo->m_sx = data;
+					break;
+				case 5: data = _ttoi(rString);
+					pSCharInfo->m_sy = data;
+					break;
+				case 6: data = _ttoi(rString);
+					pSCharInfo->m_line = data;
+					break;
+				case 7: data = _ttoi(rString);
+					pSCharInfo->m_order = data;
+					break;
+				case 8: data = _ttoi(rString);
+					pSCharInfo->m_width = data;
+					break;
+				case 9: data = _ttoi(rString);
+					pSCharInfo->m_height = data;
+					break;
+
+
+				}
+			}
+			TypeDB.m_Chars.Add(pSCharInfo);
+		}
+
+
+		fclose(fp);
+
+	}
+	//CString temp;
+	for (int i = 1; i < 2; i++)
+	{
+		int count = 0;
+		int tcount = 0
+			;
+		SCharInfo* m_Charinfo = TypeDB.m_Chars.GetAt(i);
+
+
+		if (TypeDB.ReadCSVFile())
+		{
+			
+
+			TypeDB.m_nChar = (TypeDB.m_Chars.GetCount() - 1);
+			Sm_Data.Format(_T("%d"), TypeDB.m_nChar);
+			m_k_num.SetWindowTextA(Sm_Data);
+
+			for (i = 1; i < 352; i++)
+			{
+				p = 0;
+				while (p < i && CCount.GetAt(p) != CCount.GetAt(i)) p++;
+				if (p == i) {
+					count++;
+				}
+
+			}
+			for (i = 1; i < 352; i++)
+			{
+
+				t = 0;
+				while (t < i && TCount.GetAt(t) != TCount.GetAt(i)) t++;
+				if (t == i) {
+					tcount++;
+				}
+
+			}
+			hwal = count;
+			for (i = 1; i < 352; i++)
+			{
+				p = i + 1;
+				while (p < size)
+				{
+
+					if (CCount.GetAt(i) == CCount.GetAt(p) && TCount.GetAt(i) == TCount.GetAt(p))
+					{
+						hwal = hwal - 1;
+						CCount.RemoveAt(p);
+						TCount.RemoveAt(p);
+						size--;
+					}
+					p++;
+
+				}
+			}
+
+
+		}
+		/*
+		CString Tcount;
+		Tcount.Format(_T("%d"), tcount);
+		CString Scount;
+		Scount.Format(_T("한글글자종류 : %d"), count);
+		ml_height.AddString(Sm_Data);
+		ml_height.AddString(Scount);
+		ml_height.AddString(Tcount);
+		Sm_Data.Format(_T("활자 수 %d"), size);
+		ml_height.AddString(Sm_Data);
+		*/
+	}
+
+
+
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
 	m_book.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
