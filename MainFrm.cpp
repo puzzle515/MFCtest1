@@ -415,8 +415,8 @@ void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 void CMainFrame::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	lpMMI->ptMinTrackSize.x = 2000;
-	lpMMI->ptMinTrackSize.y = 1200;
+	lpMMI->ptMinTrackSize.x = 1400;
+	lpMMI->ptMinTrackSize.y = 900;
 
 	
 	CFrameWndEx::OnGetMinMaxInfo(lpMMI);
