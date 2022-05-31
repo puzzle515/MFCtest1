@@ -200,8 +200,8 @@ void CMFCtest1View::OnBnClickedButton2()
 	int data = 0;
 
 	CString strFilePath = _T("");
-	strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv");
-
+	//strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv");
+	strFilePath.Format("C:\\Users\\Ruin\\Desktop\\응프텀프\\월인천강지곡 권상\\typeDB.csv");
 	FILE* fp = NULL;
 	fopen_s(&fp, strFilePath, "r");
 
