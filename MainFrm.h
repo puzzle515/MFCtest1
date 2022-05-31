@@ -17,10 +17,9 @@ protected: // serialization에서만 만들어집니다.
 
 // 특성입니다.
 public:
-
 // 작업입니다.
 public:
-
+	CMFCStatusBar     m_wndStatusBar;
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -37,7 +36,6 @@ public:
 protected:  // 컨트롤 모음이 포함된 멤버입니다.
 	CMFCMenuBar       m_wndMenuBar;
 	CMFCToolBar       m_wndToolBar;
-	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
 	CFileView         m_wndFileView;
 	CClassView        m_wndClassView;

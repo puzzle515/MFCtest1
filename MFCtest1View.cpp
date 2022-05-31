@@ -9,10 +9,9 @@
 #ifndef SHARED_HANDLERS
 #include "MFCtest1.h"
 #endif
-
 #include "MFCtest1Doc.h"
 #include "MFCtest1View.h"
-
+#include "MainFrm.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -33,6 +32,8 @@ BEGIN_MESSAGE_MAP(CMFCtest1View, CFormView)
 	ON_WM_CREATE()
 	ON_BN_CLICKED(IDC_BUTTON2, &CMFCtest1View::OnBnClickedButton2)
 	ON_STN_CLICKED(IDC_MetaFile, &CMFCtest1View::OnStnClickedMetafile)
+	ON_WM_MOUSEMOVE()
+	ON_BN_CLICKED(IDC_BUTTON3, &CMFCtest1View::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 // CMFCtest1View 생성/소멸
@@ -280,7 +281,7 @@ void CMFCtest1View::OnBnClickedButton2()
 		if (TypeDB.ReadCSVFile())
 		{
 			
-
+			CMFCStatusBar     m_wndStatusBar;
 			TypeDB.m_nChar = (TypeDB.m_Chars.GetCount() - 1);
 			Sm_Data.Format(_T("%d"), TypeDB.m_nChar);
 			m_k_num.SetWindowTextA(Sm_Data);
@@ -355,5 +356,43 @@ void CMFCtest1View::OnBnClickedButton2()
 
 void CMFCtest1View::OnStnClickedMetafile()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
 }
+
+
+void CMFCtest1View::OnMouseMove(UINT nFlags, CPoint point)
+{
+	CString str;
+	str.Format(_T("(%4d,%4d)"), point.x, point.y);
+	CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
+	pMainFrame->m_wndStatusBar.SetPaneText(1, str);
+
+	CFormView::OnMouseMove(nFlags, point);
+}
+
+//2022-05-31 jihun
+//글자에 네모치기
+void CMFCtest1View::OnBnClickedButton3()
+{
+	//시트값 찾아서
+	for (int i = 0; i < 352; i++) {
+		CClientDC dc(this);
+
+		CBrush brush;
+		brush.CreateStockObject(NULL_BRUSH);
+		CBrush* pOldBrush = dc.SelectObject(&brush);
+		SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
+		if (1 == pSCharInfo->m_sheet) {
+			double realsx = ((pSCharInfo->m_sx / 14.15) + 32);
+			double realsy = ((pSCharInfo->m_sy / 14.18) + 229);
+			double realwidth = ((pSCharInfo->m_width / 14));
+			double realheight = ((pSCharInfo->m_height / 14));
+			double endwidth = (realsx + realwidth);
+			double endheight = (realsy + realheight);
+			dc.Rectangle(realsx, realsy, endwidth, endheight);
+			dc.SelectObject(pOldBrush);
+
+			DeleteObject(brush);
+		}
+	}
+}// 할일 , 네모 칸 내부 투명, 초록색으로 바꾸기, 인식못한 글자들 이유 찾기

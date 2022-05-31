@@ -97,14 +97,16 @@
 #define IDC_BUTTON2                     1013
 #define IDC_BOOK_ALL                    1014
 #define IDC_K_NUM                       1015
+#define IDC_BUTTON3                     1016
+#define ID_INDICATOR_POS                59142
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        312
+#define _APS_NEXT_RESOURCE_VALUE        313
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1016
+#define _APS_NEXT_CONTROL_VALUE         1017
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

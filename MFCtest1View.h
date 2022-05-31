@@ -90,6 +90,8 @@ public:
 	CStatic m_book;
 	afx_msg void OnStnClickedMetafile();
 	CStatic m_k_num;
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnBnClickedButton3();
 };
 
 #ifndef _DEBUG  // MFCtest1View.cpp의 디버그 버전
