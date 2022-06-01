@@ -215,9 +215,9 @@ void CMFCtest1View::OnBnClickedButton2()
 	int data = 0;
 
 	CString strFilePath = _T("");
-	//strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv");
+	strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv");
 	//strFilePath.Format("C:\\Users\\Ruin\\Desktop\\응프텀프\\월인천강지곡 권상\\typeDB.csv");
-	strFilePath.Format("C:\\typeDB.csv");
+	//strFilePath.Format("C:\\typeDB.csv");
 	FILE* fp = NULL;
 	fopen_s(&fp, strFilePath, "r");
 
@@ -296,7 +296,7 @@ void CMFCtest1View::OnBnClickedButton2()
 		{
 			
 
-			for (i = 1; i < 352; i++) // page 1
+			for (i = 1; i < TypeDB.m_Chars.GetCount() ; i++) // page 1
 			{
 				SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
 
@@ -312,7 +312,7 @@ void CMFCtest1View::OnBnClickedButton2()
 			Sm_Data.Format(_T("%d"), TypeDB.m_nChar);
 			m_k_num.SetWindowTextA(Sm_Data);
 
-			for (i = 1; i < 352; i++)
+			for (i = 1; i < TypeDB.m_Chars.GetCount(); i++)
 			{
 				SCharInfo* p2SCharInfo = TypeDB.m_Chars.GetAt(i);
 
@@ -336,16 +336,17 @@ void CMFCtest1View::OnBnClickedButton2()
 						
 			p_nprint = p_nchar;
 
-			for (o = 1; o < 352; o++)
+			for (o = 1; o < TypeDB.m_Chars.GetCount(); o++)
 			{
-				p = o + 1;
-				while (p < size)
+				p = o+1;
+				SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(o);
+				while (p < TypeDB.m_Chars.GetCount())
 				{
 
 					if (CCount.GetAt(o) == CCount.GetAt(p) && TCount.GetAt(o) == TCount.GetAt(p))
 					{
 								
-						p_nprint--;
+						if(pSCharInfo->m_sheet == page) p_nprint--;
 					}
 					p++;
 
@@ -358,10 +359,10 @@ void CMFCtest1View::OnBnClickedButton2()
 
 			
 
-			// page 1 데이터 출력
+			// page  데이터 출력
 			Sm_Data.Format(_T("한글 글자수\t\t     %d 개"), p_nchar);
 			m_Pcnum.SetWindowTextA(Sm_Data);
-			Scount.Format(_T("한글 글자 종류\t\t %d 종"), p_nkind);
+			Scount.Format(_T("한글 글자 종류\t\t       %d 종"), p_nkind);
 			m_PCkind.SetWindowTextA(Scount);
 			Tcount.Format(_T("한글 활자수\t\t     %d 개"), p_nprint);
 			m_Pprintnum.SetWindowTextA(Tcount);
