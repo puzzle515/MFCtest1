@@ -32,7 +32,7 @@ BEGIN_MESSAGE_MAP(CMFCtest1View, CFormView)
 	ON_EN_CHANGE(IDC_EDIT1, &CMFCtest1View::OnEnChangeEdit1)
 	ON_WM_CREATE()
 	ON_BN_CLICKED(IDC_BUTTON2, &CMFCtest1View::OnBnClickedButton2)
-	ON_STN_CLICKED(IDC_MetaFile, &CMFCtest1View::OnStnClickedMetafile)
+	
 END_MESSAGE_MAP()
 
 // CMFCtest1View 생성/소멸
@@ -54,6 +54,11 @@ void CMFCtest1View::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_CHARS, m_listctrl);
 	DDX_Control(pDX, IDC_MetaFile, m_book);
 	DDX_Control(pDX, IDC_K_NUM, m_k_num);
+	DDX_Control(pDX, IDC_K_KIND, m_k_knd);
+	DDX_Control(pDX, IDC_K_P_NUM, m_kpnum);
+	DDX_Control(pDX, IDC_PAGE_CNUM, m_Pcnum);
+	DDX_Control(pDX, IDC_PAGE_KIND, m_PCkind);
+	DDX_Control(pDX, IDC_PAGE_PRINT, m_Pprintnum);
 }
 
 BOOL CMFCtest1View::PreCreateWindow(CREATESTRUCT& cs)
@@ -179,8 +184,17 @@ void CMFCtest1View::OnBnClickedButton2()
 	// 중복 체크용
 	CString C_temp, T_temp;
 	int hwal = 352;
+	int i = 0;
 	int p = 0;
 	int t = 0;
+	int o = 0;
+	int j = 0;
+	int y = 0;
+	int cake = 0;
+	int page = 3;
+	int p_nchar=0;
+	int p_nkind= 0;
+	int p_nprint=0;
 
 
 
@@ -200,8 +214,8 @@ void CMFCtest1View::OnBnClickedButton2()
 	int data = 0;
 
 	CString strFilePath = _T("");
-	strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv");
-
+	strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv"); // 박기형 파일
+	
 	FILE* fp = NULL;
 	fopen_s(&fp, strFilePath, "r");
 
@@ -269,23 +283,87 @@ void CMFCtest1View::OnBnClickedButton2()
 
 	}
 	//CString temp;
-	for (int i = 1; i < 2; i++)
-	{
+
 		int count = 0;
-		int tcount = 0
-			;
-		SCharInfo* m_Charinfo = TypeDB.m_Chars.GetAt(i);
+		int tcount = 0;
+		CString Tcount;
+		CString Scount;
 
 
-		if (TypeDB.ReadCSVFile())
+		if (TypeDB.ReadCSVFile()) // TypeDB 읽어오기 
 		{
 			
 
-			TypeDB.m_nChar = (TypeDB.m_Chars.GetCount() - 1);
-			Sm_Data.Format(_T("%d"), TypeDB.m_nChar);
-			m_k_num.SetWindowTextA(Sm_Data);
+			for (i = 1; i < 352; i++) // page 1
+			{
+				SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
 
+
+				if (page == pSCharInfo->m_sheet) // page = 1  // 92 8
+				{
+					p_nchar++;
+				}
+			}
+			
+			
+					
 			for (i = 1; i < 352; i++)
+			{
+				SCharInfo* p2SCharInfo = TypeDB.m_Chars.GetAt(i);
+
+				if (p2SCharInfo->m_sheet == page)
+				{
+					p = i;
+					p = p - (o);
+					
+					while (p < i && CCount.GetAt(p) != CCount.GetAt(i)) p++;
+					if (p == i) {
+						p_nkind++;
+					}
+					o++;
+				}
+
+			}
+		//	p_nkind = p_nchar - p_nkind;
+			
+							
+						
+						
+			p_nprint = p_nchar;
+
+			for (o = 1; o < 352; o++)
+			{
+				p = o + 1;
+				while (p < size)
+				{
+
+					if (CCount.GetAt(o) == CCount.GetAt(p) && TCount.GetAt(o) == TCount.GetAt(p))
+					{
+								
+						p_nprint--;
+					}
+					p++;
+
+				}
+			}
+					
+				
+			
+
+
+			
+
+			// page 1 데이터 출력
+			Sm_Data.Format(_T("한글 글자수\t\t     %d 개"), p_nchar);
+			m_Pcnum.SetWindowTextA(Sm_Data);
+			Scount.Format(_T("한글 글자 종류\t\t %d 종"), p_nkind);
+			m_PCkind.SetWindowTextA(Scount);
+			Tcount.Format(_T("한글 활자수\t\t     %d 개"), p_nprint);
+			m_Pprintnum.SetWindowTextA(Tcount);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			for (i = 1; i < (TypeDB.m_Chars.GetCount() - 1); i++)
 			{
 				p = 0;
 				while (p < i && CCount.GetAt(p) != CCount.GetAt(i)) p++;
@@ -314,8 +392,6 @@ void CMFCtest1View::OnBnClickedButton2()
 					if (CCount.GetAt(i) == CCount.GetAt(p) && TCount.GetAt(i) == TCount.GetAt(p))
 					{
 						hwal = hwal - 1;
-						CCount.RemoveAt(p);
-						TCount.RemoveAt(p);
 						size--;
 					}
 					p++;
@@ -325,18 +401,20 @@ void CMFCtest1View::OnBnClickedButton2()
 
 
 		}
-		/*
-		CString Tcount;
-		Tcount.Format(_T("%d"), tcount);
-		CString Scount;
-		Scount.Format(_T("한글글자종류 : %d"), count);
-		ml_height.AddString(Sm_Data);
-		ml_height.AddString(Scount);
-		ml_height.AddString(Tcount);
-		Sm_Data.Format(_T("활자 수 %d"), size);
-		ml_height.AddString(Sm_Data);
-		*/
-	}
+		TypeDB.m_nChar = (TypeDB.m_Chars.GetCount() - 1);
+		Sm_Data.Format(_T("한글 글자수\t\t\t%d 개"), TypeDB.m_nChar);
+		m_k_num.SetWindowTextA(Sm_Data);
+		//Sm_Data.Format(_T(" %d 종"), TypeDB.m_nChar);
+		
+		//Tcount.Format(_T("%d"), tcount);
+		
+		Scount.Format(_T("한글 글자 종류\t\t\t%d 종"), count);
+		m_k_knd.SetWindowTextA(Scount);
+		Tcount.Format(_T("한글 활자수\t\t\t%d 개"), size);
+		m_kpnum.SetWindowTextA(Tcount);
+
+		
+	
 
 
 
@@ -353,7 +431,3 @@ void CMFCtest1View::OnBnClickedButton2()
 }
 
 
-void CMFCtest1View::OnStnClickedMetafile()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}

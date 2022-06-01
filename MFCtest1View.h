@@ -35,6 +35,7 @@ public:
 };
 
 
+
 class CMFCtest1View : public CFormView
 {
 protected: // serialization에서만 만들어집니다.
@@ -90,6 +91,12 @@ public:
 	CStatic m_book;
 	afx_msg void OnStnClickedMetafile();
 	CStatic m_k_num;
+	afx_msg void OnStnClickedKNum3();
+	CStatic m_k_knd;
+	CStatic m_kpnum;
+	CStatic m_Pcnum;
+	CStatic m_PCkind;
+	CStatic m_Pprintnum;
 };
 
 #ifndef _DEBUG  // MFCtest1View.cpp의 디버그 버전
