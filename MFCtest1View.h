@@ -52,6 +52,9 @@ public:
 	CMFCtest1Doc* GetDocument() const;
 	CTypeDB TypeDB;
 	int num = 1;
+	int old_p = 1;
+	int selx, sely;
+	int page = 1;
 
 // 작업입니다.
 public:
@@ -99,6 +102,9 @@ public:
 	CStatic m_Pprintnum;
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnBnClickedButton3();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	CSpinButtonCtrl m_spin;
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 };
 
 #ifndef _DEBUG  // MFCtest1View.cpp의 디버그 버전
