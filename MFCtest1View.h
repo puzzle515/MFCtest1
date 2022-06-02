@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#define IDC_LIST_CHARS 100
 #include "afxwin.h"
 
 struct SCharInfo
@@ -53,7 +52,8 @@ public:
 	CTypeDB TypeDB;
 	int num = 1;
 	int old_p = 1;
-	int selx, sely;
+	int selx = 0;
+	int	sely = 0;
 	int page = 1;
 
 // 작업입니다.
@@ -90,21 +90,29 @@ public:
 	afx_msg void OnEnChangeEdit1();
 	CListCtrl m_listctrl;
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnBnClickedButton2();
+	//afx_msg void OnBnClickedButton2();
 	CStatic m_book;
-	afx_msg void OnStnClickedMetafile();
+	//afx_msg void OnStnClickedMetafile();
 	CStatic m_k_num;
-	afx_msg void OnStnClickedKNum3();
+	//afx_msg void OnStnClickedKNum3();
 	CStatic m_k_knd;
 	CStatic m_kpnum;
 	CStatic m_Pcnum;
 	CStatic m_PCkind;
 	CStatic m_Pprintnum;
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnBnClickedButton3();
+	//afx_msg void OnBnClickedButton3();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	CSpinButtonCtrl m_spin;
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	CStatic m_korean;
+	CStatic Info_m_char;
+	CStatic m_InfoSheet;
+	CStatic m_InfoLine;
+	CStatic m_Infoorder;
+	CStatic m_wjang;
+	CComboBox m_combo;
+	afx_msg void OnClickedButtonOpen();
 };
 
 #ifndef _DEBUG  // MFCtest1View.cpp의 디버그 버전

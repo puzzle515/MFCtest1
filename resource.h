@@ -84,8 +84,10 @@
 #define IDS_FIND_TAB                    302
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
+#define IDB_BITMAP1                     313
 #define IDC_EDIT1                       1000
 #define IDC_BUTTON1                     1001
+#define IDC_BUTTON_OPEN                 1001
 #define IDC_EDIT2                       1002
 #define IDC_SPIN1                       1003
 #define IDC_SPIN_SHEET                  1003
@@ -104,15 +106,22 @@
 #define IDC_PAGE_PRINT                  1018
 #define IDC_PAGE_KIND                   1019
 #define IDC_PAGE_CNUM                   1020
+#define IDC_KOREA                       1021
+#define IDC_Infomchar                   1022
+#define IDC_InfoSheet                   1023
+#define IDC_InfoLine                    1024
+#define IDC_Infoorder                   1025
+#define IDC_K_NUM2                      1026
+#define IDC_STATIC_SHEETS               1028
 #define ID_INDICATOR_POS                59142
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        313
+#define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1017
+#define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
