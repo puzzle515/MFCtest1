@@ -55,6 +55,8 @@ public:
 	int selx = 0;
 	int	sely = 0;
 	int page = 1;
+	int p_n;
+	int cake ;
 
 // 작업입니다.
 public:
@@ -113,6 +115,8 @@ public:
 	CStatic m_wjang;
 	CComboBox m_combo;
 	afx_msg void OnClickedButtonOpen();
+	CButton m_buttonopen;
+	CBitmapButton m_openbutton;
 };
 
 #ifndef _DEBUG  // MFCtest1View.cpp의 디버그 버전

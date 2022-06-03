@@ -71,6 +71,8 @@ void CMFCtest1View::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_Infoorder, m_Infoorder);
     DDX_Control(pDX, IDC_STATIC_SHEETS, m_wjang);
     DDX_Control(pDX, IDC_EDIT_BOOKNAME, m_combo);
+
+    DDX_Control(pDX, IDC_BUTTON_OPEN, m_openbutton);
 }
 
 BOOL CMFCtest1View::PreCreateWindow(CREATESTRUCT& cs)
@@ -88,6 +90,8 @@ void CMFCtest1View::OnInitialUpdate()
     ResizeParentToFit();
     m_spin.SetRange(1, 3);
     m_spin.SetPos(1);
+    m_openbutton.LoadBitmaps(IDB_BITMAP1, NULL, NULL, NULL);
+    m_openbutton.SizeToContent();
 }
 
 
@@ -183,7 +187,7 @@ int CMFCtest1View::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_listctrl.InsertColumn(0, _T("장"), LVCFMT_LEFT, 50, 0);
     m_listctrl.InsertColumn(1, _T("행"), LVCFMT_LEFT, 50, 1);
     m_listctrl.InsertColumn(0, _T("번"), LVCFMT_LEFT, 50, 2);
-
+    
     return 0;
 }
 
@@ -205,108 +209,109 @@ void CMFCtest1View::OnLButtonDown(UINT nFlags, CPoint point)
 {
     // TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
     // TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-    
-
-    for (int i = 0; i < TypeDB.m_Chars.GetCount(); i++)
+    if (TypeDB.ReadCSVFile())
     {
-        SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
-        if (pSCharInfo->m_sheet == page)
+
+        for (int i = 0; i < TypeDB.m_Chars.GetCount(); i++)
         {
-            if (
-                ((pSCharInfo->m_sx / 14.17) + 33) < selx && selx < ((pSCharInfo->m_sx / 14.17) + 33) + ((pSCharInfo->m_width / 14.17))
-                && ((pSCharInfo->m_sy / 14.2) + 229) < sely && sely < ((pSCharInfo->m_sy / 14.2) + 229) + ((pSCharInfo->m_height / 14.2))
-                )
-
+            SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
+            if (pSCharInfo->m_sheet == page)
             {
-                old_p = i;
-               
+                if (
+                    ((pSCharInfo->m_sx / 14.17) + 33) < selx && selx < ((pSCharInfo->m_sx / 14.17) + 33) + ((pSCharInfo->m_width / 14.17))
+                    && ((pSCharInfo->m_sy / 14.2) + 229) < sely && sely < ((pSCharInfo->m_sy / 14.2) + 229) + ((pSCharInfo->m_height / 14.2))
+                    )
 
+                {
+                    old_p = i;
+                }
             }
         }
-    }
-    //시트값 찾아서
-    CClientDC dc(this);
-    CPen Gpen, Rpen;
-    CBrush brush, rbrush;
-    brush.CreateStockObject(NULL_BRUSH);
-    rbrush.CreateStockObject(NULL_BRUSH);
+        //시트값 찾아서
+        CClientDC dc(this);
+        CPen Gpen, Rpen;
+        CBrush brush, rbrush;
+        brush.CreateStockObject(NULL_BRUSH);
+        rbrush.CreateStockObject(NULL_BRUSH);
 
-    Rpen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
-    Gpen.CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
-    for (int i = 1; i < 353; i++)
-    {
+        Rpen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+        Gpen.CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
+        for (int i = 1; i < 353; i++)
+        {
 
-        SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
-        CPen* pOldPen = dc.SelectObject(&Gpen);
-        CBrush* pOldBrush = dc.SelectObject(&brush);
-        if (page == pSCharInfo->m_sheet) {
-            double realsx = ((pSCharInfo->m_sx / 14.17) + 33.0);
-            double realsy = ((pSCharInfo->m_sy / 14.2) + 229.0);
-            double realwidth = ((pSCharInfo->m_width / 14.17));
-            double realheight = ((pSCharInfo->m_height / 14.2));
-            double endwidth = (realsx + realwidth);
-            double endheight = (realsy + realheight);
-            dc.Rectangle(realsx, realsy, endwidth, endheight);
-            dc.SelectObject(pOldPen);
-            dc.SelectObject(pOldBrush);
-            DeleteObject(Gpen);
-            DeleteObject(brush);
+            SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
+            CPen* pOldPen = dc.SelectObject(&Gpen);
+            CBrush* pOldBrush = dc.SelectObject(&brush);
+            if (page == pSCharInfo->m_sheet) {
+                double realsx = ((pSCharInfo->m_sx / 14.17) + 33.0);
+                double realsy = ((pSCharInfo->m_sy / 14.2) + 229.0);
+                double realwidth = ((pSCharInfo->m_width / 14.17));
+                double realheight = ((pSCharInfo->m_height / 14.2));
+                double endwidth = (realsx + realwidth);
+                double endheight = (realsy + realheight);
+                dc.Rectangle(realsx, realsy, endwidth, endheight);
+                dc.SelectObject(pOldPen);
+                dc.SelectObject(pOldBrush);
+                DeleteObject(Gpen);
+                DeleteObject(brush);
+
+            }
+
 
         }
 
+        {
+            SCharInfo* poldSCharInfo = TypeDB.m_Chars.GetAt(old_p);
+            if (page == poldSCharInfo->m_sheet) {
 
-    }
+                CPen* prOldPen = dc.SelectObject(&Rpen);
+                CBrush* prOldBrush = dc.SelectObject(&rbrush);
+                double realsx = ((poldSCharInfo->m_sx / 14.17) + 33);
+                double realsy = ((poldSCharInfo->m_sy / 14.2) + 229);
+                double realwidth = ((poldSCharInfo->m_width / 14.17));
+                double realheight = ((poldSCharInfo->m_height / 14.2));
+                double endwidth = (realsx + realwidth);
+                double endheight = (realsy + realheight);
+                dc.Rectangle(realsx, realsy, endwidth, endheight);
+                dc.SelectObject(prOldPen);
+                dc.SelectObject(prOldBrush);
 
-    {
-        SCharInfo* poldSCharInfo = TypeDB.m_Chars.GetAt(old_p);
-        if (page  == poldSCharInfo->m_sheet) {
+                DeleteObject(Rpen);
+                DeleteObject(rbrush);
+            }
+            {//2022-06-02 글자정보 받아오기 이미지, 글자정보
+                CString address, pInfoC, pInfoS, pInfoL, pInfoO;
+                SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(old_p);
+                CString itype, isheet, isx, isy;
+                itype.Format(_T("%d"), pSCharInfo->m_type);
+                isheet.Format(_T("%d"), pSCharInfo->m_sheet);
+                isx.Format(_T("%d"), pSCharInfo->m_sx);
+                isy.Format(_T("%d"), pSCharInfo->m_sy);
 
-            CPen* prOldPen = dc.SelectObject(&Rpen);
-            CBrush* prOldBrush = dc.SelectObject(&rbrush);
-            double realsx = ((poldSCharInfo->m_sx / 14.17) + 33);
-            double realsy = ((poldSCharInfo->m_sy / 14.2) + 229);
-            double realwidth = ((poldSCharInfo->m_width / 14.17));
-            double realheight = ((poldSCharInfo->m_height / 14.2));
-            double endwidth = (realsx + realwidth);
-            double endheight = (realsy + realheight);
-            dc.Rectangle(realsx, realsy, endwidth, endheight);
-            dc.SelectObject(prOldPen);
-            dc.SelectObject(prOldBrush);
+                //주소 사용자마다 바꿔놓기
+                address = _T("C:\\Users\\qmqal\\Desktop\\월인천강지곡 권상\\03_type\\");
 
-            DeleteObject(Rpen);
-            DeleteObject(rbrush);
-        }
-        {//2022-06-02 글자정보 받아오기 이미지, 글자정보
-            CString address, pInfoC, pInfoS, pInfoL, pInfoO;
-            SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(old_p);
-            CString itype, isheet, isx, isy;
-            itype.Format(_T("%d"), pSCharInfo->m_type);
-            isheet.Format(_T("%d"), pSCharInfo->m_sheet);
-            isx.Format(_T("%d"), pSCharInfo->m_sx);
-            isy.Format(_T("%d"), pSCharInfo->m_sy);
+                address += pSCharInfo->m_char + "\\" + itype + "\\" + isheet + '_' + isx + '_' + isy + ".png";
+                //주소
 
-            //주소
-            address = _T("C:\\Users\\Ruin\\Desktop\\월인천강지곡 권상\\03_type\\");
-            address += pSCharInfo->m_char + "\\" + itype + "\\" + isheet + '_' + isx + '_' + isy + ".png";
-            //주소
-
-            CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
-            m_korean.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
-            CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
-            dc = m_korean.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
-            dc->SetStretchBltMode(COLORONCOLOR);
-            CImage image2;//불러오고 싶은 이미지를 로드할 CImage 
-            image2.Load(address);//이미지 로드
-            image2.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
-            ReleaseDC(dc);//DC 해제
-            pInfoC = (_T("%s"), pSCharInfo->m_char);
-            Info_m_char.SetWindowTextA(pInfoC);
-            pInfoS.Format(_T("%d장"), pSCharInfo->m_sheet);
-            m_InfoSheet.SetWindowTextA(pInfoS);
-            pInfoL.Format(_T("%d행"), pSCharInfo->m_line);
-            m_InfoLine.SetWindowTextA(pInfoL);
-            pInfoO.Format(_T("%d번"), pSCharInfo->m_order);
-            m_Infoorder.SetWindowTextA(pInfoO);
+                CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+                m_korean.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+                CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+                dc = m_korean.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+                dc->SetStretchBltMode(COLORONCOLOR);
+                CImage image2;//불러오고 싶은 이미지를 로드할 CImage 
+                image2.Load(address);//이미지 로드
+                image2.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+                ReleaseDC(dc);//DC 해제
+                pInfoC = (_T("%s"), pSCharInfo->m_char);
+                Info_m_char.SetWindowTextA(pInfoC);
+                pInfoS.Format(_T("%d장"), pSCharInfo->m_sheet);
+                m_InfoSheet.SetWindowTextA(pInfoS);
+                pInfoL.Format(_T("%d행"), pSCharInfo->m_line);
+                m_InfoLine.SetWindowTextA(pInfoL);
+                pInfoO.Format(_T("%d번"), pSCharInfo->m_order);
+                m_Infoorder.SetWindowTextA(pInfoO);
+            }
         }
     }
     CFormView::OnLButtonDown(nFlags, point);
@@ -316,31 +321,33 @@ void CMFCtest1View::OnLButtonDown(UINT nFlags, CPoint point)
 void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
     // TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-    if (pScrollBar->GetSafeHwnd() == m_spin.GetSafeHwnd())
+    if(TypeDB.ReadCSVFile())
     {
-        int size = 352;
-        CString Sm_Data;
-        // 중복 체크용
-        CString Scount, Tcount;
-        int hwal = 352;
-        int i = 0;
-        int p = 0;
-        int t = 0;
-        int o = 0;
-        int j = 0;
-        int y = 0;
-        int cake = 0;
-        int p_nchar = 0;
-        int p_nkind = 0;
-        int p_nprint = 0;
-        CString str;
-        str.Format(_T(" %d"), nPos);
-        page = nPos;
-   
+        if (pScrollBar->GetSafeHwnd() == m_spin.GetSafeHwnd())
+        {
+            int size = 352;
+            CString Sm_Data;
+            // 중복 체크용
+            CString Scount, Tcount;
+            int hwal = 352;
+            int i = 0;
+            int p = 0;
+            int t = 0;
+            int o = 0;
+            int j = 0;
+            int y = 0;
+
+            int p_nchar = 0;
+            int p_nkind = 0;
+            int p_nprint = 0;
+            CString str;
+            str.Format(_T(" %d"), nPos);
+            page = nPos;
 
 
-     
-        
+
+
+
 
             for (i = 1; i < TypeDB.m_Chars.GetCount(); i++) // page 1
             {
@@ -353,7 +360,7 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
                 }
             }
 
-           
+
 
             for (i = 1; i < TypeDB.m_Chars.GetCount(); i++)
             {
@@ -397,7 +404,25 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
             }
 
 
+            if (page == 1)
+            {
+                old_p = 1;
 
+
+
+            }
+            else if (page == 2)
+            {
+
+                old_p = p_n + 1;
+                cake = p_nchar;
+            }
+            else if (page == 3)
+            {
+
+                old_p = cake + p_n + 1;
+
+            }
 
 
 
@@ -411,41 +436,150 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
             m_Pprintnum.SetWindowTextA(Tcount);
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-       
+
+
+
+            for (int i = 0; i < TypeDB.m_Chars.GetCount(); i++)
+            {
+                SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
+                if (pSCharInfo->m_sheet == page)
+                {
+                    if (
+                        ((pSCharInfo->m_sx / 14.17) + 33) < selx && selx < ((pSCharInfo->m_sx / 14.17) + 33) + ((pSCharInfo->m_width / 14.17))
+                        && ((pSCharInfo->m_sy / 14.2) + 229) < sely && sely < ((pSCharInfo->m_sy / 14.2) + 229) + ((pSCharInfo->m_height / 14.2))
+                        )
+
+                    {
+                        old_p = i;
+                    }
+                }
+            }
 
             CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
             m_book.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
-            CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
-            dc = m_book.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
-            dc->SetStretchBltMode(COLORONCOLOR);
+            CDC* cdc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+            cdc = m_book.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+            cdc->SetStretchBltMode(COLORONCOLOR);
             CImage image;//불러오고 싶은 이미지를 로드할 CImage 
             switch (page)
             {
             case 1:
                 image.Load(_T("001.jpg"));//이미지 로드
-                image.StretchBlt(dc->m_hDC, 0, 0, 700, 494, SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
-                ReleaseDC(dc);//DC 해제
+                image.StretchBlt(cdc->m_hDC, 0, 0, 700, 494, SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+                ReleaseDC(cdc);//DC 해제
                 break;
             case 2:
                 image.Load(_T("002.jpg"));//이미지 로드
-                image.StretchBlt(dc->m_hDC, 0, 0, 700, 494, SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
-                ReleaseDC(dc);//DC 해제
+                image.StretchBlt(cdc->m_hDC, 0, 0, 700, 494, SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+                ReleaseDC(cdc);//DC 해제
                 break;
             case 3:
                 image.Load(_T("003.jpg"));//이미지 로드
-                image.StretchBlt(dc->m_hDC, 0, 0, 700, 494, SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
-                ReleaseDC(dc);//DC 해제
+                image.StretchBlt(cdc->m_hDC, 0, 0, 700, 494, SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+                ReleaseDC(cdc);//DC 해제
                 break;
             default:
                 break;
             }
-            
-           
-            return;
+
+            //시트값 찾아서
+            CClientDC dc(this);
+            CPen Gpen, Rpen;
+            CBrush brush, rbrush;
+            brush.CreateStockObject(NULL_BRUSH);
+            rbrush.CreateStockObject(NULL_BRUSH);
+
+            Rpen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+            Gpen.CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
+            for (int i = 1; i < 353; i++)
+            {
+
+                SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
+                CPen* pOldPen = dc.SelectObject(&Gpen);
+                CBrush* pOldBrush = dc.SelectObject(&brush);
+                if (page == pSCharInfo->m_sheet) {
+                    double realsx = ((pSCharInfo->m_sx / 14.17) + 33.0);
+                    double realsy = ((pSCharInfo->m_sy / 14.2) + 229.0);
+                    double realwidth = ((pSCharInfo->m_width / 14.17));
+                    double realheight = ((pSCharInfo->m_height / 14.2));
+                    double endwidth = (realsx + realwidth);
+                    double endheight = (realsy + realheight);
+                    dc.Rectangle(realsx, realsy, endwidth, endheight);
+                    dc.SelectObject(pOldPen);
+                    dc.SelectObject(pOldBrush);
+                    DeleteObject(Gpen);
+                    DeleteObject(brush);
+
+                }
+
+
+            }
+
+            {
+                SCharInfo* poldSCharInfo = TypeDB.m_Chars.GetAt(old_p);
+                if (page == poldSCharInfo->m_sheet) {
+
+                    CPen* prOldPen = dc.SelectObject(&Rpen);
+                    CBrush* prOldBrush = dc.SelectObject(&rbrush);
+                    double realsx = ((poldSCharInfo->m_sx / 14.17) + 33);
+                    double realsy = ((poldSCharInfo->m_sy / 14.2) + 229);
+                    double realwidth = ((poldSCharInfo->m_width / 14.17));
+                    double realheight = ((poldSCharInfo->m_height / 14.2));
+                    double endwidth = (realsx + realwidth);
+                    double endheight = (realsy + realheight);
+                    dc.Rectangle(realsx, realsy, endwidth, endheight);
+                    dc.SelectObject(prOldPen);
+                    dc.SelectObject(prOldBrush);
+
+                    DeleteObject(Rpen);
+                    DeleteObject(rbrush);
+                }
+                {//2022-06-02 글자정보 받아오기 이미지, 글자정보
+                    CString address, pInfoC, pInfoS, pInfoL, pInfoO;
+                    SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(old_p);
+                    CString itype, isheet, isx, isy;
+                    itype.Format(_T("%d"), pSCharInfo->m_type);
+                    isheet.Format(_T("%d"), pSCharInfo->m_sheet);
+                    isx.Format(_T("%d"), pSCharInfo->m_sx);
+                    isy.Format(_T("%d"), pSCharInfo->m_sy);
+
+                    //주소 사용자마다 바꿔놓기
+                    address = _T("C:\\Users\\qmqal\\Desktop\\월인천강지곡 권상\\03_type\\");
+
+                    address += pSCharInfo->m_char + "\\" + itype + "\\" + isheet + '_' + isx + '_' + isy + ".png";
+                    //주소
+
+                    CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+                    m_korean.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+                    CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+                    dc = m_korean.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+                    dc->SetStretchBltMode(COLORONCOLOR);
+                    CImage image2;//불러오고 싶은 이미지를 로드할 CImage 
+                    image2.Load(address);//이미지 로드
+                    image2.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+                    ReleaseDC(dc);//DC 해제
+                    pInfoC = (_T("%s"), pSCharInfo->m_char);
+                    Info_m_char.SetWindowTextA(pInfoC);
+                    pInfoS.Format(_T("%d장"), pSCharInfo->m_sheet);
+                    m_InfoSheet.SetWindowTextA(pInfoS);
+                    pInfoL.Format(_T("%d행"), pSCharInfo->m_line);
+                    m_InfoLine.SetWindowTextA(pInfoL);
+                    pInfoO.Format(_T("%d번"), pSCharInfo->m_order);
+                    m_Infoorder.SetWindowTextA(pInfoO);
+                }
+            }
+
+
+            //////////////////////////////
+
+
         }
+        return;
+    
 
         CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
- }
+    }
+}
  /*void CMFCtest1View::OnClickedButtonOpen()
  {
      CFileDialog ins_dlg(TRUE, NULL, "월인천상지곡 권상");
@@ -482,7 +616,7 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
      int o = 0;
      int j = 0;
      int y = 0;
-     int cake = 0;
+     
      int p_nchar = 0;
      int p_nkind = 0;
      int p_nprint = 0;
@@ -506,7 +640,7 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
      CString strFilePath = _T("");
      //strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv");
-     strFilePath.Format("C:\\Users\\Ruin\\Desktop\\월인천강지곡 권상\\typeDB.csv");
+     strFilePath.Format("C:\\Users\\qmqal\\Desktop\\월인천강지곡 권상\\typeDB.csv");
      //strFilePath.Format("C:\\typeDB.csv");
      FILE* fp = NULL;
      fopen_s(&fp, strFilePath, "r");
@@ -720,8 +854,9 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
          isx.Format(_T("%d"), pSCharInfo->m_sx);
          isy.Format(_T("%d"), pSCharInfo->m_sy);
 
-         //주소합성
-         address = _T("C:\\Users\\Ruin\\Desktop\\월인천강지곡 권상\\03_type\\");
+         //주소합성 컴퓨터 마다 바꾸기
+         address = _T("C:\\Users\\qmqal\\Desktop\\월인천강지곡 권상\\03_type\\");
+         
          address += pSCharInfo->m_char + "\\" + itype + "\\" + isheet + '_' + isx + '_' + isy + ".png";
          //주소합성
 
@@ -789,7 +924,7 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
      }
 
 
-
+     p_n = p_nchar;
 
      // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
  }
