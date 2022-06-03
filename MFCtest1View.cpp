@@ -277,25 +277,19 @@ void CMFCtest1View::OnLButtonDown(UINT nFlags, CPoint point)
             DeleteObject(rbrush);
         }
         {//2022-06-02 글자정보 받아오기 이미지, 글자정보
-            CString address, test, testc, testt, testx, tests, testy, testd1, testd2, testp, testw, pInfoC, pInfoS, pInfoL, pInfoO;
+            CString address, pInfoC, pInfoS, pInfoL, pInfoO;
             SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(old_p);
             CString itype, isheet, isx, isy;
             itype.Format(_T("%d"), pSCharInfo->m_type);
             isheet.Format(_T("%d"), pSCharInfo->m_sheet);
             isx.Format(_T("%d"), pSCharInfo->m_sx);
             isy.Format(_T("%d"), pSCharInfo->m_sy);
-            test = (_T("C:\\Users\\Ruin\\source\\repos\\Jihun\\03_type\\"));;
-            testc = (_T("%s"), pSCharInfo->m_char);
-            testt = (_T("%d"), itype);
-            tests = (_T("%d"), isheet);
-            testx = (_T("%d"), isx);
-            testy = (_T("%d"), isy);
-            testp = (_T(".png"));
-            testw = (_T("\\"));
-            //%s\\%s\\%s_%s_%s.png , pSCharInfo->m_char, itype, isheet, isx, isy)
-            address = "C:" + testw + testw + "Users" + testw + testw + "Ruin" + testw + testw + "source" + testw + testw + "repos" +
-                testw + testw + "Jihun" + testw + testw + "03_type" + testw + testw + testc + testw + testw + testt + testw +
-                testw + tests + '_' + testx + '_' + testy + testp;
+
+            //주소
+            address = _T("C:\\Users\\Ruin\\Desktop\\월인천강지곡 권상\\03_type\\");
+            address += pSCharInfo->m_char + "\\" + itype + "\\" + isheet + '_' + isx + '_' + isy + ".png";
+            //주소
+
             CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
             m_korean.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
             CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
@@ -512,7 +506,7 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
      CString strFilePath = _T("");
      //strFilePath.Format("C:\\Users\\qmqal\\Desktop\\typeDB.csv");
-     strFilePath.Format("C:\\Users\\Ruin\\Desktop\\응프텀프\\월인천강지곡 권상\\typeDB.csv");
+     strFilePath.Format("C:\\Users\\Ruin\\Desktop\\월인천강지곡 권상\\typeDB.csv");
      //strFilePath.Format("C:\\typeDB.csv");
      FILE* fp = NULL;
      fopen_s(&fp, strFilePath, "r");
@@ -717,43 +711,38 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
      Rpen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
      Gpen.CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
-     old_p = 1;
-     CString address, test, testc, testt, testx, tests, testy, testd1, testd2, testp, testw, pInfoC, pInfoS, pInfoL, pInfoO;
-     SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(old_p);
-     CString itype, isheet, isx, isy;
-     itype.Format(_T("%d"), pSCharInfo->m_type);
-     isheet.Format(_T("%d"), pSCharInfo->m_sheet);
-     isx.Format(_T("%d"), pSCharInfo->m_sx);
-     isy.Format(_T("%d"), pSCharInfo->m_sy);
-     test = (_T("C:\\Users\\Ruin\\source\\repos\\Jihun\\03_type\\"));;
-     testc = (_T("%s"), pSCharInfo->m_char);
-     testt = (_T("%d"), itype);
-     tests = (_T("%d"), isheet);
-     testx = (_T("%d"), isx);
-     testy = (_T("%d"), isy);
-     testp = (_T(".png"));
-     testw = (_T("\\"));
-     //%s\\%s\\%s_%s_%s.png , pSCharInfo->m_char, itype, isheet, isx, isy)
-     address = "C:" + testw + testw + "Users" + testw + testw + "Ruin" + testw + testw + "source" + testw + testw + "repos" +
-         testw + testw + "Jihun" + testw + testw + "03_type" + testw + testw + testc + testw + testw + testt + testw +
-         testw + tests + '_' + testx + '_' + testy + testp;
-     CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
-     m_korean.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
-     CDC* idc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
-     idc = m_korean.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
-     idc->SetStretchBltMode(COLORONCOLOR);
-     CImage image2;//불러오고 싶은 이미지를 로드할 CImage 
-     image2.Load(address);//이미지 로드
-     image2.StretchBlt(idc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
-     ReleaseDC(idc);//DC 해제
-     pInfoC = (_T("%s"), pSCharInfo->m_char);
-     Info_m_char.SetWindowTextA(pInfoC);
-     pInfoS.Format(_T("%d장"), pSCharInfo->m_sheet);
-     m_InfoSheet.SetWindowTextA(pInfoS);
-     pInfoL.Format(_T("%d행"), pSCharInfo->m_line);
-     m_InfoLine.SetWindowTextA(pInfoL);
-     pInfoO.Format(_T("%d번"), pSCharInfo->m_order);
-     m_Infoorder.SetWindowTextA(pInfoO);
+     {//2022-06-02 글자정보 받아오기 이미지, 글자정보
+         CString address, pInfoC, pInfoS, pInfoL, pInfoO;
+         SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(old_p);
+         CString itype, isheet, isx, isy;
+         itype.Format(_T("%d"), pSCharInfo->m_type);
+         isheet.Format(_T("%d"), pSCharInfo->m_sheet);
+         isx.Format(_T("%d"), pSCharInfo->m_sx);
+         isy.Format(_T("%d"), pSCharInfo->m_sy);
+
+         //주소합성
+         address = _T("C:\\Users\\Ruin\\Desktop\\월인천강지곡 권상\\03_type\\");
+         address += pSCharInfo->m_char + "\\" + itype + "\\" + isheet + '_' + isx + '_' + isy + ".png";
+         //주소합성
+
+         CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+         m_korean.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+         CDC* dc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+         dc = m_korean.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+         dc->SetStretchBltMode(COLORONCOLOR);
+         CImage image2;//불러오고 싶은 이미지를 로드할 CImage 
+         image2.Load(address);//이미지 로드
+         image2.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+         ReleaseDC(dc);//DC 해제
+         pInfoC = (_T("%s"), pSCharInfo->m_char);
+         Info_m_char.SetWindowTextA(pInfoC);
+         pInfoS.Format(_T("%d장"), pSCharInfo->m_sheet);
+         m_InfoSheet.SetWindowTextA(pInfoS);
+         pInfoL.Format(_T("%d행"), pSCharInfo->m_line);
+         m_InfoLine.SetWindowTextA(pInfoL);
+         pInfoO.Format(_T("%d번"), pSCharInfo->m_order);
+         m_Infoorder.SetWindowTextA(pInfoO);
+     }
      for (int i = 1; i < 353; i++)
      {
 
