@@ -5,6 +5,8 @@
 #pragma once
 #include "afxwin.h"
 
+
+
 struct SCharInfo
 {
 	CString m_char;
@@ -43,10 +45,10 @@ protected: // serialization에서만 만들어집니다.
 
 public:
 #ifdef AFX_DESIGN_TIME
-	enum{ IDD = IDD_MFCTEST1_FORM };
+	enum { IDD = IDD_MFCTEST1_FORM };
 #endif
 
-// 특성입니다.
+	// 특성입니다.
 public:
 	CMFCtest1Doc* GetDocument() const;
 	CTypeDB TypeDB;
@@ -56,12 +58,18 @@ public:
 	int	sely = 0;
 	int page = 1;
 	int p_n;
-	int cake ;
+	int cake;
 
-// 작업입니다.
+	void SHOW_VTK();
+	// 작업입니다.
 public:
+	//vtk
 
-// 재정의입니다.
+	vtkSmartPointer<vtkRenderWindow>m_vtkWindow;
+	void InitVtkWindow(void* hWnd);
+	void ResizeVtkWindow();
+
+	// 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
@@ -72,7 +80,7 @@ protected:
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
 
-// 구현입니다.
+	// 구현입니다.
 public:
 	virtual ~CMFCtest1View();
 #ifdef _DEBUG
@@ -82,10 +90,10 @@ public:
 
 protected:
 
-// 생성된 메시지 맵 함수
+	// 생성된 메시지 맵 함수
 protected:
 	afx_msg void OnFilePrintPreview();
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	//	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 public:
@@ -105,8 +113,8 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	//afx_msg void OnBnClickedButton3();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	CSpinButtonCtrl m_spin;
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+
+	//	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	CStatic m_korean;
 	CStatic Info_m_char;
 	CStatic m_InfoSheet;
@@ -117,10 +125,20 @@ public:
 	afx_msg void OnClickedButtonOpen();
 	CButton m_buttonopen;
 	CBitmapButton m_openbutton;
+	//	afx_msg void OnEnVscrollEdit2();
+
+	CSpinButtonCtrl m_pspin;
+	CSpinButtonCtrl m_lspin;
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+
+	//	afx_msg void OnEnHscrollEdit3();
+	//	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // MFCtest1View.cpp의 디버그 버전
 inline CMFCtest1Doc* CMFCtest1View::GetDocument() const
-   { return reinterpret_cast<CMFCtest1Doc*>(m_pDocument); }
+{
+	return reinterpret_cast<CMFCtest1Doc*>(m_pDocument);
+}
 #endif
 
