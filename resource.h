@@ -113,6 +113,7 @@
 #define IDC_Infoorder                   1025
 #define IDC_K_NUM2                      1026
 #define IDC_STATIC_SHEETS               1028
+#define IDC_STATIC_FRAME                1029
 #define ID_INDICATOR_POS                59142
 
 // Next default values for new objects
@@ -121,7 +122,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1029
+#define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
