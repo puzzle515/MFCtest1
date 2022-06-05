@@ -31,18 +31,20 @@ BEGIN_MESSAGE_MAP(CMFCtest1View, CFormView)
     ON_COMMAND(ID_FILE_PRINT_DIRECT, &CFormView::OnFilePrint)
     ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CMFCtest1View::OnFilePrintPreview)
     ON_WM_CONTEXTMENU()
-    //    ON_WM_RBUTTONUP()
+    
     ON_EN_CHANGE(IDC_EDIT1, &CMFCtest1View::OnEnChangeEdit1)
     ON_WM_CREATE()
     ON_WM_MOUSEMOVE()
     ON_WM_LBUTTONDOWN()
     ON_WM_LBUTTONDOWN()
-    //    ON_WM_VSCROLL()
+    
     ON_BN_CLICKED(IDC_BUTTON_OPEN, &CMFCtest1View::OnClickedButtonOpen)
-    //    ON_EN_VSCROLL(IDC_EDIT2, &CMFCtest1View::OnEnVscrollEdit2)
+    
     ON_WM_VSCROLL()
-    //    ON_EN_HSCROLL(IDC_EDIT3, &CMFCtest1View::OnEnHscrollEdit3)
-    //    ON_WM_RBUTTONDOWN()
+
+    // 리스트 컨트롤
+    ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_CHARS, & CMFCtest1View:: OnLvnItemchangedlist)
+    ON_EN_CHANGE(IDC_EDIT3, &CMFCtest1View::OnEnChangeEdit3)
 END_MESSAGE_MAP()
 
 // CMFCtest1View 생성/소멸
@@ -83,7 +85,12 @@ void CMFCtest1View::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_BUTTON_OPEN, m_openbutton);
 
     DDX_Control(pDX, IDC_SPIN_SHEET, m_pspin);
-    DDX_Control(pDX, IDC_SPIN2, m_lspin);
+
+
+    DDX_Control(pDX, IDC_KOREA_SEL, m_korea_sel);
+    DDX_Control(pDX, IDC_SPIN_TYPE, m_dspin);
+    
+    DDX_Control(pDX, IDC_STATIC_TYPES, m_hcount);
 }
 
 BOOL CMFCtest1View::PreCreateWindow(CREATESTRUCT& cs)
@@ -101,8 +108,8 @@ void CMFCtest1View::OnInitialUpdate()
     ResizeParentToFit();
     m_pspin.SetRange(1, 3);
     m_pspin.SetPos(1);
-    m_lspin.SetRange(0, 5);
-    m_lspin.SetPos(0);
+    
+    m_dspin.SetPos(0);
     m_openbutton.LoadBitmaps(IDB_BITMAP1, NULL, NULL, NULL);
     m_openbutton.SizeToContent();
 
@@ -262,7 +269,8 @@ void CMFCtest1View::OnMouseMove(UINT nFlags, CPoint point)
 
 void CMFCtest1View::OnLButtonDown(UINT nFlags, CPoint point)
 {
-
+    CString count;
+    int hcount=0;
     // TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
     // TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
     if (TypeDB.ReadCSVFile())
@@ -386,14 +394,26 @@ void CMFCtest1View::OnLButtonDown(UINT nFlags, CPoint point)
                        m_listctrl.SetItem(num, 1, LVIF_TEXT, sx, NULL, NULL, NULL, NULL);
                        m_listctrl.SetItem(num, 2, LVIF_TEXT, sy,  NULL, NULL, NULL, NULL);*/
 
-                for (int i = 352; i > 1; i--)
-                {
 
+                CRect rect2;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+                m_korea_sel.GetWindowRect(rect2);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+                CDC* dc2; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+                dc2 = m_korea_sel.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+                dc2->SetStretchBltMode(COLORONCOLOR);
+                CImage image22;//불러오고 싶은 이미지를 로드할 CImage 
+                image22.Load(address);//이미지 로드
+                image22.StretchBlt(dc2->m_hDC, 0, 0, rect2.Width(), rect2.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+                ReleaseDC(dc2);//DC 해제
+
+                for (int i = 352; i > 0; i--)
+                {
+                    //해놔
 
                     {
 
                         if (pSCharInfo->m_char == CCount.GetAt(i) && pSCharInfo->m_type != TCount.GetAt(i))
                         {
+                            hcount++;
                             SCharInfo* phSCharInfo = TypeDB.m_Chars.GetAt(i);
                             sheet.Format("%d", phSCharInfo->m_sheet);
                             sx.Format("%d", phSCharInfo->m_sx);
@@ -407,7 +427,13 @@ void CMFCtest1View::OnLButtonDown(UINT nFlags, CPoint point)
 
                     }
                 }
-            }
+                
+
+            }   
+        
+            m_dspin.SetRange(0, hcount);
+            count.Format("/ %d개", hcount);
+            m_hcount.SetWindowTextA(count);
         }
         // TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
         //VTK 출력
@@ -424,12 +450,14 @@ void CMFCtest1View::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CMFCtest1View::OnClickedButtonOpen()
 {
-    CFileDialog ins_dlg(TRUE, NULL, "월인천상지곡 권상");
+    BeginWaitCursor();
+    
+    CFileDialog ins_dlg(TRUE, NULL, "월인천강지곡 권상");
     if (ins_dlg.DoModal() == IDOK) {
-        ins_dlg.m_ofn.lpstrInitialDir = "c:\\월인천상지곡 권상";
+        ins_dlg.m_ofn.lpstrInitialDir = "c:\\월인천강지곡 권상";
     }
     m_combo.SetWindowText(0);
-    SetDlgItemText(IDC_EDIT_BOOKNAME, "월인천상지곡 권상");
+    SetDlgItemText(IDC_EDIT_BOOKNAME, "월인천강지곡 권상");
     m_wjang.SetWindowText("/3장");
     m_pspin.SetRange(1, 3);
 
@@ -603,7 +631,7 @@ void CMFCtest1View::OnClickedButtonOpen()
     m_Pcnum.SetWindowTextA(Sm_Data);
     Scount.Format(_T("한글 글자 종류\t\t       %d 종"), p_nkind);
     m_PCkind.SetWindowTextA(Scount);
-    Tcount.Format(_T("한글 활자수\t\t     %d 개"), p_nprint);
+    Tcount.Format(_T("한글 활자수\t\t       %d 개"), p_nprint);
     m_Pprintnum.SetWindowTextA(Tcount);
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -698,6 +726,17 @@ void CMFCtest1View::OnClickedButtonOpen()
         image2.Load(address);//이미지 로드
         image2.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
         ReleaseDC(dc);//DC 해제
+
+        CRect rect2;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+        m_korea_sel.GetWindowRect(rect2);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+        CDC* dc2; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+        dc2 = m_korea_sel.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+        dc2->SetStretchBltMode(COLORONCOLOR);
+        CImage image22;//불러오고 싶은 이미지를 로드할 CImage 
+        image22.Load(address);//이미지 로드
+        image22.StretchBlt(dc2->m_hDC, 0, 0, rect2.Width(), rect2.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+        ReleaseDC(dc2);//DC 해제
+
         pInfoC = (_T("%s"), pSCharInfo->m_char);
         Info_m_char.SetWindowTextA(pInfoC);
         pInfoS.Format(_T("%d장"), pSCharInfo->m_sheet);
@@ -706,6 +745,8 @@ void CMFCtest1View::OnClickedButtonOpen()
         m_InfoLine.SetWindowTextA(pInfoL);
         pInfoO.Format(_T("%d번"), pSCharInfo->m_order);
         m_Infoorder.SetWindowTextA(pInfoO);
+
+        
     }
     for (int i = 1; i < 353; i++)
     {
@@ -759,6 +800,7 @@ void CMFCtest1View::OnClickedButtonOpen()
 
     p_n = p_nchar;
 
+    EndWaitCursor();
     // TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
 
@@ -1011,6 +1053,17 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
                     image2.Load(address);//이미지 로드
                     image2.StretchBlt(dc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
                     ReleaseDC(dc);//DC 해제
+
+                    CRect rect2;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+                    m_korea_sel.GetWindowRect(rect2);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+                    CDC* dc2; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+                    dc2 = m_korea_sel.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+                    dc2->SetStretchBltMode(COLORONCOLOR);
+                    CImage image22;//불러오고 싶은 이미지를 로드할 CImage 
+                    image22.Load(address);//이미지 로드
+                    image22.StretchBlt(dc2->m_hDC, 0, 0, rect2.Width(), rect2.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+                    ReleaseDC(dc2);//DC 해제
+
                     pInfoC = (_T("%s"), pSCharInfo->m_char);
                     Info_m_char.SetWindowTextA(pInfoC);
                     pInfoS.Format(_T("%d장"), pSCharInfo->m_sheet);
@@ -1024,8 +1077,9 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 
         }
-
-
+        
+         
+        
 
 
         SHOW_VTK();
@@ -1035,6 +1089,73 @@ void CMFCtest1View::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
     return;
     CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
+}
+
+
+void CMFCtest1View::OnLvnItemchangedlist (NMHDR* pNMHDR, LRESULT* pResult)
+{
+
+    LPNMLISTVIEW pNMLV = reinterpret_cast <LPNMLISTVIEW> (pNMHDR);
+    if (pNMLV->uChanged & LVIF_STATE)
+    {
+        if (pNMLV->uNewState & (LVIS_SELECTED | LVIS_FOCUSED))
+
+        {
+           
+            CString address, ichar, itype, isheet, isx, isy;
+            CString check_type, check_sheet, check_sx, check_sy;
+            int seld = pNMLV->iItem;
+            int i = 1;
+            isheet = m_listctrl.GetItemText(seld, 0);
+            isx = m_listctrl.GetItemText(seld, 1);
+            isy = m_listctrl.GetItemText(seld, 2);
+
+
+        
+
+            for (int i = 0; i<TypeDB.m_Chars.GetCount() ; i++)
+            {
+                SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
+
+                check_type.Format("%d", pSCharInfo->m_type);
+                check_sheet.Format("%d", pSCharInfo->m_sheet);
+                check_sx.Format("%d", pSCharInfo->m_sx);
+                check_sy.Format("%d", pSCharInfo->m_sy);
+
+                if ((isheet == check_sheet) &&
+                    (isx == check_sx) && (isy == check_sy))
+                {
+                    ichar = pSCharInfo->m_char;
+                    itype.Format("%d", pSCharInfo->m_type);
+                    
+                  
+                        
+                }
+
+            }
+           
+
+
+            address = _T("C:\\Users\\qmqal\\Desktop\\월인천강지곡 권상\\03_type\\");
+        
+            address += ichar  + "\\" + itype + "\\" + isheet + '_' + isx + '_' + isy + ".png";
+            
+            //주소합성
+            
+
+
+            CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+            m_korea_sel.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+            CDC* ldc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+            ldc = m_korea_sel.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+            ldc->SetStretchBltMode(COLORONCOLOR);
+            CImage image5;//불러오고 싶은 이미지를 로드할 CImage 
+            image5.Load(address);//이미지 로드
+            image5.StretchBlt(ldc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+            ReleaseDC(ldc);//DC 해제
+            m_dspin.SetPos(seld);
+        } 
+    }
 }
 
 
@@ -1097,4 +1218,66 @@ void CMFCtest1View::SHOW_VTK()
     m_vtkWindow->AddRenderer(renderer);
     m_vtkWindow->Render();
 
+}
+
+void CMFCtest1View::OnEnChangeEdit3()
+{
+    if (TypeDB.ReadCSVFile())
+    {
+        int nPos = m_dspin.GetPos();
+
+        CString address, ichar, itype, isheet, isx, isy;
+        CString check_type, check_sheet, check_sx, check_sy;
+
+
+        isheet = m_listctrl.GetItemText(nPos, 0);
+        isx = m_listctrl.GetItemText(nPos, 1);
+        isy = m_listctrl.GetItemText(nPos, 2);
+
+
+
+
+        for (int i = 0; i < TypeDB.m_Chars.GetCount(); i++)
+        {
+            SCharInfo* pSCharInfo = TypeDB.m_Chars.GetAt(i);
+
+            check_type.Format("%d", pSCharInfo->m_type);
+            check_sheet.Format("%d", pSCharInfo->m_sheet);
+            check_sx.Format("%d", pSCharInfo->m_sx);
+            check_sy.Format("%d", pSCharInfo->m_sy);
+
+            if ((isheet == check_sheet) &&
+                (isx == check_sx) && (isy == check_sy))
+            {
+                ichar = pSCharInfo->m_char;
+                itype.Format("%d", pSCharInfo->m_type);
+
+
+
+            }
+
+        }
+
+
+
+        address = _T("C:\\Users\\qmqal\\Desktop\\월인천강지곡 권상\\03_type\\");
+
+        address += ichar + "\\" + itype + "\\" + isheet + '_' + isx + '_' + isy + ".png";
+
+        //주소합성
+
+
+
+        CRect rect;//픽쳐 컨트롤의 크기를 저장할 CRect 객체
+        m_korea_sel.GetWindowRect(rect);//GetWindowRect를 사용해서 픽쳐 컨트롤의 크기를 받는다.
+        CDC* ldc; //픽쳐 컨트롤의 DC를 가져올  CDC 포인터
+        ldc = m_korea_sel.GetDC(); //픽쳐 컨트롤의 DC를 얻는다.
+        ldc->SetStretchBltMode(COLORONCOLOR);
+        CImage image5;//불러오고 싶은 이미지를 로드할 CImage 
+        image5.Load(address);//이미지 로드
+        image5.StretchBlt(ldc->m_hDC, 0, 0, rect.Width(), rect.Height(), SRCCOPY);//이미지를 픽쳐 컨트롤 크기로 조정
+        ReleaseDC(ldc);//DC 해제
+
+    }
+    // TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }

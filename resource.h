@@ -93,6 +93,7 @@
 #define IDC_SPIN_SHEET                  1003
 #define IDC_EDIT3                       1004
 #define IDC_SPIN2                       1005
+#define IDC_SPIN_TYPE                   1005
 #define IDC_LIST_CHARS                  1010
 #define IDC_EDIT_                       1011
 #define IDC_EDIT_BOOKNAME               1011
@@ -114,6 +115,9 @@
 #define IDC_K_NUM2                      1026
 #define IDC_STATIC_SHEETS               1028
 #define IDC_STATIC_FRAME                1029
+#define IDC_KOREA_SEL                   1031
+#define IDC_STATIC_TYPE                 1032
+#define IDC_STATIC_TYPES                1032
 #define ID_INDICATOR_POS                59142
 
 // Next default values for new objects
@@ -122,7 +126,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1030
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

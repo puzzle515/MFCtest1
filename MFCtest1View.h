@@ -130,9 +130,15 @@ public:
 	CSpinButtonCtrl m_pspin;
 	CSpinButtonCtrl m_lspin;
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-
-	//	afx_msg void OnEnHscrollEdit3();
+	afx_msg void OnLvnItemchangedlist(NMHDR* pNMHDR, LRESULT* pResult);
+	//	afx_msg void OnEnHscrollEdit3(); 
 	//	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	CStatic m_count;
+	CStatic m_korea_sel;
+	CSpinButtonCtrl m_dspin;
+	
+	CStatic m_hcount;
+	afx_msg void OnEnChangeEdit3();
 };
 
 #ifndef _DEBUG  // MFCtest1View.cpp의 디버그 버전
