@@ -61,6 +61,7 @@ public:
 	int cake;
 
 	void SHOW_VTK();
+	void LIST_SHOW_VTK();
 	// 작업입니다.
 public:
 	//vtk

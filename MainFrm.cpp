@@ -185,6 +185,10 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 		return FALSE;
 	cs.x = 0;
 	cs.y = 0;
+
+	cs.style &= ~WS_THICKFRAME;
+	cs.style &= ~WS_MAXIMIZEBOX;
+	cs.style &= ~WS_MINIMIZEBOX;
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
 
